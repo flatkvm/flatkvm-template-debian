@@ -1,0 +1,1 @@
+SUBSYSTEM=="virtio-ports", MODE="0666"
