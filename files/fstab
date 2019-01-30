@@ -1,1 +1,2 @@
 /dev/vda	/	ext4    defaults	1 1
+/dev/vdb	/home/flatkvm/.var/app	ext4	defaults	1 2

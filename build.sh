@@ -36,6 +36,7 @@ $B run $CTR systemctl set-default graphical
 $B run $CTR mkdir -p /home/flatkvm/.config/i3
 $B copy $CTR files/i3.config /home/flatkvm/.config/i3/config
 $B run $CTR mkdir -p /var/lib/flatpak
+$B run $CTR mkdir -p /home/flatkvm/.var/app
 $B copy $CTR files/asound.state /var/lib/alsa/asound.state
 $B copy $CTR files/interfaces /etc/network/interfaces
 $B copy $CTR files/shadow /etc/shadow
@@ -57,9 +58,9 @@ $B run $CTR ln -s /usr/lib/systemd/user/pulseaudio.socket /home/flatkvm/.config/
 $B run $CTR rm -fr /usr/share/man
 $B run $CTR rm -fr /usr/share/doc
 
-qemu-img create -f qcow2 template-debian-tmp.qcow2 2G
+qemu-img create -f qcow2 tmp.qcow2 2G
 modprobe nbd
-qemu-nbd -c /dev/nbd0 template-debian-tmp.qcow2
+qemu-nbd -c /dev/nbd0 tmp.qcow2
 mkfs.ext4 /dev/nbd0
 mount /dev/nbd0 /mnt
 
@@ -71,6 +72,12 @@ qemu-nbd -d /dev/nbd0
 $B umount $CTR
 $B rm $CTR
 
-qemu-img convert -c -f qcow2 -O qcow2 template-debian-tmp.qcow2 template-debian.qcow2
-rm template-debian-tmp.qcow2
+qemu-img convert -c -f qcow2 -O qcow2 tmp.qcow2 template-debian.qcow2
+rm tmp.qcow2
 
+qemu-img create -f qcow2 tmp.qcow2 20G
+qemu-nbd -c /dev/nbd0 tmp.qcow2
+mkfs.ext4 /dev/nbd0
+qemu-nbd -d /dev/nbd0
+qemu-img convert -c -f qcow2 -O qcow2 tmp.qcow2 template-debian-data.qcow2
+rm tmp.qcow2
